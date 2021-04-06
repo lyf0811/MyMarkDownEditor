@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="MyMarkDown.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyMarkdown</title>
+</head>
+<body>
+    <div class="background">
+        <input type="file" name="picturefile" id="picturefile" accept="image/jpeg, image/jpg, image/jpg, image/png" onchange="change('insert','picture')" >
+        <input type="file" name="videofile" id="videofile" accept="video/mp4, video/avi, video/mov, video/mpeg, video/ogg" onchange="change('insert','video')" ></div>  
+        
+        <div class="maincontainer">
+            <div class="menu" id="menu">
+                <div class="list1" id ='list1' >
+                    <div>
+                    <div id='tips' style="top:-30px; background-color: grey;position: absolute; visibility: hidden;"></div>
+                    </div>
+                    <div style="display: inline;text-align: center">
+                        <select name="fontstyle" id="fontstyle" onchange="change('fontName',document.getElementById('fontstyle').value)"></select>
+                    </div>
+                    <div style="display: inline;text-align: center">
+                        <select name="fontsize" id="fontsize" onchange="change('fontSize',document.getElementById('fontsize').value)" ></select>
+                    </div>
+                    <button name="加粗" id="bold" onclick="change('bold')"><img src="./icon/B.png" alt="bold"></button>
+                    <button name="斜体"id="italic" onclick="change('italic')">  <img src="./icon/italic.png" alt="save"></button>
+                    <button name="下划线"id="underline" onclick="change('underline')">  <img src="./icon/underline.png" alt="underline" >  </button>
+                    <button name="删除线"id="deleteline" onclick="change('strikeThrough')">  <img src="./icon/deleteline.png" alt="deleteline" >  </button>
+                    <button name="下标"id="subscript" onclick="change('subscript')">  <img src="./icon/subscript.png" alt="subscript" >  </button>
+                    <button name="上标"id="superscript" onclick="change('superscript')">  <img src="./icon/superscript.png" alt="superscript" >  </button>
+                    <button name="字体颜色"id="fontcolor" onclick="change('foreColor')">  <img src="./icon/fontcolor.png" alt="fontcolor" >  </button>
+                        <div id="colorboard" style=" position: absolute;display: none;" onmouseout="document.getElementById('colorboard').style.display='none'">
+                            <iframe src="colorboard.html" scrolling =no     frameborder="0" height="255 " width="521"></iframe>  
+                        </div>
+                    <button name="背景颜色"id="fontbackground" onclick="change('hiliteColor')">  <img src="./icon/fontbackground.png" alt="fontbackground" >  </button>
+
+                    <button name="插入图片"id="picture" onclick="document.getElementById('picturefile').click()"> <img src="./icon/picture.png" alt="picture" >  </button>
+                    <button name="插入视频"id="video" onclick="document.getElementById('videofile').click()"> <img src="./icon/video.png" alt="video" >  </button>
+                    <button name="撤销"id="undo" onclick="change('undo')"> <img src="./icon/undo.png" alt="undo" >  </button>
+                    <button name="重做"id="redo" onclick="change('redo')"> <img src="./icon/redo.png" alt="redo" >  </button>
+                <!-- </div> -->
+                <!-- <div class="list2"> -->
+                    <button name="有序列表"id="orderlist" onclick="change('insertOrderedList')"> <img src="./icon/orderlist.png" alt="orderlist" >  </button>
+                    <button name="无序列表"id="unorderlist" onclick="change('insertUnorderedList')"> <img src="./icon/unorderlist.png" alt="unorderlist" >  </button>
+                    <button name="左对齐"id="justifyleft" onclick="change('justifyLeft')"> <img src="./icon/justifyleft.png" alt="justifyleft" >  </button>
+                    <button name="居中"id="justifycenter" onclick="change('justifyCenter')"> <img src="./icon/justifycenter.png" alt="justifycenter" >  </button>
+                    <button name="右对齐"id="justifyright" onclick="change('justifyRight')"> <img src="./icon/justifyright.png" alt="justifyright" >  </button>
+                    <button name="两端对齐"id="justifyfull" onclick="change('justifyFull')"> <img src="./icon/justifyfull.png" alt="justifyfull" >  </button>
+                    <button name="表格"id="table" onclick="change('table')"> <img src="./icon/table.png" alt="table" >  </button>
+                        <div id ="createtable" style="width: 300px; height: 150px;position:absolute;display: none; background-color: white; border: 0.5px solid;padding: 10px;">
+                                <div class="th" style="width: 100% ;height:30px;line-height: 30px;font-weight: bold;text-align: center;">插入表格</div><hr>
+                                <div class="tr" style="width: 100%; text-align: center;font-size: 15px;">
+                                    <span>创建</span><input type="text" name="row" id="row" value=3 style=" width: 18%;border: transparent; background-color: transparent; text-align: center;font-size: 20px;">
+                                    <span>行</span><input type="text" name="column" id="column" value=3 style=" width: 18%;border: transparent; background-color: transparent; text-align: center;font-size: 20px;">
+                                    <span>列的表格</span>
+                                </div>
+                                <div id="tableinsert" style="width:100%;height: 70px; line-height: 70px;">
+                                    <button id='confirmtable'onclick="change('inserttable',document.getElementById('row').value,document.getElementById('column').value)" style="width: 20%;margin-left: 20%;">确定</button>
+                                    <button id='canceltable'onclick="document.getElementById('createtable').style.display='none'" style="width: 20%;margin-left: 20%;">取消</button>
+                                </div>
+                        </div>    
+                    <button name="插入代码"id="code" onclick="change('code')"> <img src="./icon/code.png" alt="code" >  </button>
+                        <div id="insertcode" style="width: 500px; height: 300px;position:absolute;display: none; background-color: white; border: 0.5px solid;padding:20px ;">
+                            <div class="th" style="width: 100% ;height:20px;line-height: 20px;font-weight: bold;">插入代码</div><hr>
+                            <div class="tr">
+                                <input type="text" name="codetype" id="codetype" value="C++" style="width: 20%;">
+                            </div>
+                           <textarea name="" id="codecontent" cols="" rows=""style="width: 490px; height:190px; resize:none;margin-top: 10px;border: 1px solid ;overflow: auto;padding: 3px;" ></textarea>
+                            <div style="margin:10px">
+                                <button id='confirmcode'onclick="change('insertcode',document.getElementById('codecontent').value)" style="width: 20%;margin-left: 20%;">确定</button>
+                                <button id='cancelcode'onclick="document.getElementById('insertcode').style.display='none'" style="width: 20%;margin-left: 20%;">取消</button>
+                            </div>
+                        </div>
+                    <button name="多行缩进"id="indent" onclick="change('indent')"> <img src="./icon/indent.png" alt="indent" >  </button>
+
+                </div>
+            </div>
+            <div class="text" >
+                <div class="mytext" id="mytext" contenteditable="true" style="overflow:auto;height:100%;" autofocus><p>12345678</p><br></div>
+            </div>
+      
+        </div>
+               
+</body>
+<script src="MyMarkDown.js"></script>
+<script>    
+
+
+</script>
+</html>
