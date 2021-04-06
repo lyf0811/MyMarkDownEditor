@@ -1,18 +1,17 @@
-
-
 declare var jQuery: (selector: string) => any;
-var selection
-var lastEditRange
-var codenum
-var isinit
-
+var lastEditRange:any
+var codenum:number
+var isinit:boolean
+var mytext:any=document.getElementById('mytext') 
+var colorboard:any=document.getElementById('colorboard')
 /* 页面初始化
     1.加载字体格式表
     2.加载字体大小表
     3.设置指针悬停按钮时显示的功能提示
 */
 
-function pageinit(){           
+function pageinit(){      
+      
     lastEditRange=document.createRange()
     codenum=0
     isinit=0
@@ -29,39 +28,39 @@ function pageinit(){
         //当敲Backspace键时，事件源类型为密码或单行、多行文本的， 
         //并且readOnly属性为true或disabled属性为true的，则退格键失效 
         var flag1 = ev.keyCode == 9
-        //当敲Backspace键时，事件源类型非密码或单行、多行文本的，则退格键失效 
-        var flag2 = ev.keyCode == 8 && (document.getElementById('mytext').innerHTML=="<p><br></p>"||document.getElementById('mytext').innerText==null)
+        var flag2 = ev.keyCode == 8 && (mytext.innerHTML=="<p><br></p>"||mytext.innerText==null)
         //var flag3 = ev.keyCode == 8 && window.getSelection().getRangeAt(0).commonAncestorContainer.parentNode.nodeName=="XMP"&&window.getSelection().getRangeAt(0).commonAncestorContainer.
     
-        //判断 
-        if (flag2||flag1||flag3 ) return false;
+    
+        if (flag2||flag1 ) return false;
     }
-    console.log(document.getElementById('mytext').firstChild.textContent.length)
-    document.getElementById('mytext').focus()
+    console.log(mytext.firstChild.textContent.length)
 
     lastEditRange.collapse(true)
-    lastEditRange.setStart(document.getElementById('mytext').firstChild.firstChild,0)
-    lastEditRange.setEnd(document.getElementById('mytext').firstChild.firstChild,0)
+    lastEditRange.setStart(mytext.firstChild.firstChild,0)
+    lastEditRange.setEnd(mytext.firstChild.firstChild,0)
 
     
-    document.getElementById('mytext').addEventListener('keydown',function(e){
+    mytext.addEventListener('keydown',function(e){
         if(e.keyCode==9){   
 
         var txt=document.createTextNode('\xa0\xa0\xa0\xa0')
         lastEditRange.insertNode(txt)
-        document.getElementById('mytext').focus()
-
+        mytext.focus()
         var range=document.createRange()
         range.setStart(txt,txt.length)
         range.setEnd(txt,txt.length)
         window.getSelection().removeAllRanges()
         window.getSelection().addRange(range)
+        lastEditRange.setStart(txt,txt.length)
+        lastEditRange.setEnd(txt,txt.length)
+
         }
         
         
   
     },false)
-    document.getElementById("mytext").scrollTop=100;
+    mytext.scrollTop=100;
     var buttonlist=document.getElementsByTagName('button')
     document.getElementById('list1').onmouseout=function(){
         document.getElementById('tips').style.visibility='hidden'
@@ -79,19 +78,18 @@ function pageinit(){
         }
         
     }
-    document.getElementById('mytext').onclick=function(){
+    mytext.onclick=function(){
         
         lastEditRange=window.getSelection().getRangeAt(0)
         console.log(lastEditRange)
-
-
-        document.getElementById('colorboard').style.display='none'
+        colorboard.style.display='none'
         document.getElementById('createtable').style.display='none'
         document.getElementById('insertcode').style.display='none'
     }    
     
     $(document).ready(function(){
-        $.getJSON('data.json',function(json){
+        $('#backgroundOpacity').val("50%")
+        $.getJSON('./src/data.json',function(json){
         for(var i:number=0;i<json.fontname.length;i++)
         {
             var str="<option>"+json.fontname[i]+"</option>"
@@ -108,142 +106,145 @@ function pageinit(){
 
 
 
-    function change(name, args=null,args2=null){
-    document.getElementById('mytext').focus()
-       
+function change(name, args=null,args2=null){
+mytext.focus()
+var space="<p><br></p>"
 
-        switch(name){
-            case 'code':
-                document.getElementById('insertcode').style.display='block'
-                document.getElementById('insertcode').style.left=document.body.clientWidth/2-320+"px"
-                console.log(document.body.clientWidth)
-            break;
-            case 'insertcode':
+    switch(name){
+        case 'code':
+            document.getElementById('insertcode').style.display='block'
+            document.getElementById('insertcode').style.left=document.body.clientWidth/2-320+"px"
+            console.log(document.body.clientWidth)
+        break;
+        case 'insertcode':
 
-                var a='<div id="'+codenum+'"></div>'
-                var space="<br>"
-                var codecontent='<pre><code class="code"><xmp>'+args+'</xmp></code></pre> <p>&nbsp;<br></p>'
+            var a='<div id="'+codenum+'"></div>'+space
+            var codecontent='<pre><code class="code"><xmp>'+args+'</xmp></code></pre>'
 
-                var range=window.getSelection().getRangeAt(0)
-                range.setStart(lastEditRange.startContainer,lastEditRange.startOffset)
-                range.setEnd(lastEditRange.startContainer,lastEditRange.endOffset)  
-                document.execCommand('insertHTML',false,a)
-                document.getElementById(codenum).innerHTML=codecontent        
-                document.getElementById('insertcode').style.display='none'
-               
-                
-                codenum++
-         
-              
-
-            break;
-            case 'hiliteColor':
-                
-                document.getElementById('colorboard').style.display='block'
-                document.getElementById('colorboard').className='hiliteColor'
-            break;
-            case 'foreColor':
-                document.getElementById('colorboard').style.display='block'
-                document.getElementById('colorboard').className='foreColor'
-            break;
+            var range=window.getSelection().getRangeAt(0)
+            range.setStart(lastEditRange.startContainer,lastEditRange.startOffset)
+            range.setEnd(lastEditRange.startContainer,lastEditRange.endOffset)  
+            document.execCommand('insertHTML',false,a)
+            document.getElementById(codenum).innerHTML=codecontent        
+            document.getElementById('insertcode').style.display='none'
             
-            case 'table':
-                document.getElementById('createtable').style.display='block'
-                document.getElementById('createtable').style.left=document.getElementById('table').offsetLeft-100+'px'
-
-            break;
+            codenum++
+        
             
-            case 'inserttable':
-                document.getElementById('mytext').focus()
-                var tablerow:any=""
-                tablerow+='<tr style="background-color:gainsboro;height:50px">'
-                for(var j:number=0;j<args2;j++){
-                    tablerow+='<td></td>'
 
-                }
-                tablerow+='</tr>'
-                if(args>1){
-                    for(var i:number=0;i<args-1;i++){
-                        tablerow+='<tr style="height:50px">'
-                        for(var j:number=0;j<args2;j++){
-                            tablerow+='<td></td>'
+        break;
+        case 'hiliteColor':
+            
+            colorboard.style.display='block'
+            colorboard.className='hiliteColor'
+        break;
+        case 'foreColor':
+            colorboard.style.display='block'
+            colorboard.className='foreColor'
+        break;
+        
+        case 'table':
+            document.getElementById('createtable').style.display='block'
+            document.getElementById('createtable').style.left=document.getElementById('table').offsetLeft-100+'px'
 
-                        }
-                        tablerow+='</tr>'
+        break;
+        
+        case 'inserttable':
+            mytext.focus()
+            var tablerow:any=""
+            tablerow+='<tr style="background-color:gainsboro;height:50px">'
+            for(var j:number=0;j<args2;j++){
+                tablerow+='<td></td>'
+
+            }
+            tablerow+='</tr>'
+            if(args>1){
+                for(var i:number=0;i<args-1;i++){
+                    tablerow+='<tr style="height:50px">'
+                    for(var j:number=0;j<args2;j++){
+                        tablerow+='<td></td>'
+
                     }
-                 }
-
-                if(lastEditRange.startContainer!=undefined){
-                var range=window.getSelection().getRangeAt(0)
-                range.setStart(lastEditRange.startContainer,lastEditRange.startOffset)
-                range.setEnd(lastEditRange.startContainer,lastEditRange.endOffset)
+                    tablerow+='</tr>'
                 }
-                
-                var tablecontent='<table border="1" width="100%" cellpadding="0"cellspacing="0">'+tablerow
-                +'</table>'  
-                document.execCommand('insertHTML',false,tablecontent)
-                document.execCommand('enableInlineTableEditing',false,'true')
-                document.getElementById('createtable').style.display='none'
-              
-               
-            break;
+                }
 
-                
-            case 'insert':{
-                var file;
+            if(lastEditRange.startContainer!=undefined){
+            var range=window.getSelection().getRangeAt(0)
+            range.setStart(lastEditRange.startContainer,lastEditRange.startOffset)
+            range.setEnd(lastEditRange.startContainer,lastEditRange.endOffset)
+            }
+            
+            var tablecontent='<table border="1" width="100%" cellpadding="0"cellspacing="0">'+tablerow
+            +'</table>'  +space
+            document.execCommand('insertHTML',false,tablecontent)
+            document.execCommand('enableInlineTableEditing',false,'true')
+            document.getElementById('createtable').style.display='none'
+            
+            
+        break;
+
+            
+        case 'insert':{
+            var file;
+            switch(args){
+                case 'picture':
+                    file=document.getElementById('picturefile').files[0]
+                break;
+
+                case 'video':
+                    file=document.getElementById('videofile').files[0]
+                break;
+
+            }
+            var reader=new FileReader();  
+            reader.readAsDataURL(file) 
+            reader.onload=function(reader){
                 switch(args){
                     case 'picture':
-                        file=document.getElementById('picturefile').files[0]
+                        var htmlcontent='<img src="'+reader.target.result+'" alt=picture style="height:50%;">'
+                        document.execCommand('insertHTML', false, htmlcontent);
                     break;
 
                     case 'video':
-                        file=document.getElementById('videofile').files[0]
+                        var mp4content='<source src="'+reader.target.result+'" type="video/mp4"/>'
+                        var oggcontent='<source src="'+reader.target.result+'" type="video/ogg"/>'
+                        var avicontent='<source src="'+reader.target.result+'" type="video/avi"/>'
+                        var mpegcontent='<source src="'+reader.target.result+'" type="video/mpeg"/>'
+                        var movcontent='<source src="'+reader.target.result+'" type="video/mov"/>'
+                        var htmlcontent='<video height="50%" controls="controls"> '+mp4content+oggcontent+avicontent+mpegcontent+movcontent+' </video>'
+                        document.execCommand('insertHTML', false, htmlcontent);
                     break;
-
-                }
-                var reader=new FileReader();  
-                reader.readAsDataURL(file) 
-                reader.onload=function(reader){
-                    switch(args){
-                        case 'picture':
-                            var htmlcontent='<img src="'+reader.target.result+'" alt=picture style="height:50%;">'
-                            document.execCommand('insertHTML', false, htmlcontent);
-                        break;
-
-                        case 'video':
-                            var mp4content='<source src="'+reader.target.result+'" type="video/mp4"/>'
-                            var oggcontent='<source src="'+reader.target.result+'" type="video/ogg"/>'
-                            var avicontent='<source src="'+reader.target.result+'" type="video/avi"/>'
-                            var mpegcontent='<source src="'+reader.target.result+'" type="video/mpeg"/>'
-                            var movcontent='<source src="'+reader.target.result+'" type="video/mov"/>'
-                            var htmlcontent='<video height="50%" controls="controls"> '+mp4content+oggcontent+avicontent+mpegcontent+movcontent+' </video>'
-                            document.execCommand('insertHTML', false, htmlcontent);
-                        break;
-                
-                }
             
             }
-            break;
-           
-            default:  
-                {
-                    document.execCommand(name, false, args);
-                    window.focus()
-                }
-            
-        }
         
-    document.getElementById('mytext').focus()
-    } 
-
-
-
-
-
+        }
+        break;
+        
+        default:  
+            {
+                document.execCommand(name, false, args);
+                mytext.focus()
+            }
+        
+    }
     
+mytext.focus()
+} 
 
+function changeBackgroundOpacity(num:number){
+    document.getElementById('text').style.backgroundColor="rgba(255,255,255,"+num/100+")"
+    document.getElementById('backgroundOpacity').value=document.getElementById('opacityRange').value+"%"
+}
 
-
-
-
+function changeBackgroundImg(){
+    var backgroundfile=document.getElementById('backgroundfile').files[0]
+    var reader=new FileReader();  
+    reader.readAsDataURL(backgroundfile) 
+    reader.onload=function(reader){
+        console.log(reader.target.result)
+        document.getElementById('background').style.backgroundImage='url("'+reader.target.result+'")'
+    }
+    console.log(1)
+}
 pageinit();
