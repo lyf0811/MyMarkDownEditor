@@ -5,17 +5,54 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="MyMarkDown.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <title>MyMarkdown</title>
 </head>
+<style>
+    @media screen and (max-width: 880px) {
+    .maincontainer,.menu{
+        width: auto;
+    }
+    .text{
+            width: auto;
+            height: 800px;
+        }
+        
+   }
+    @media screen and (min-width: 880px) and (max-width: 1025px) {
+        .maincontainer,.menu{
+            width: 820px;
+        }
+        .text{
+            width: 820px;
+            height: 800px;
+        }
+     
+   
+            
+    }
+    @media screen and (min-width: 1024px) and (max-width: 1170px)  {
+        .maincontainer,.menu{
+            width: 924px;
+        }
+        .text{
+            width: 924px;
+            height: 800px;
+        }
+
+            
+    }
+</style>
 <body>
-    <div class="background" id="background">
+    
         <input type="file" name="backgroundfile" id="backgroundfile" accept="image/jpeg, image/jpg, image/jpg, image/png" onchange="changeBackgroundImg()" >
         <input type="file" name="picturefile" id="picturefile" accept="image/jpeg, image/jpg, image/jpg, image/png" onchange="change('insert','picture')" >
-        <input type="file" name="videofile" id="videofile" accept="video/mp4, video/avi, video/mov, video/mpeg, video/ogg" onchange="change('insert','video')" ></div>  
+        <input type="file" name="videofile" id="videofile" accept="video/mp4, video/avi, video/mov, video/mpeg, video/ogg" onchange="change('insert','video')" >
+    
         
-        <div class="maincontainer">
+        <div class="maincontainer" id="maincontainer">
+
+
             <div class="menu" id="menu">
                 <div class="list1" id ='list1' >
                     <div>
@@ -74,11 +111,16 @@
                     <button name="多行缩进"id="indent" onclick="change('indent')"> <img src="./src/icon/indent.png" alt="indent" >  </button>
                     <button name="撤销"id="undo" onclick="change('undo')"> <img src="./src/icon/undo.png" alt="undo" >  </button>
                     <button name="重做"id="redo" onclick="change('redo')"> <img src="./src/icon/redo.png" alt="redo" >  </button>
+                    <button name="导出"id="print" onclick="pagePrint()"> <img src="./src/icon/print.png" alt="print" >  </button>
+                    
                 </div>
             </div>
+            <!--startprint-->
             <div class="text" id="text">
-                <div class="mytext" id="mytext" contenteditable="true"  autofocus><p>12345678<br></p></div>
+                <div class="background" id="background"></div>  
+                <div class="mytext" id="mytext" contenteditable="true"  autofocus><p>This is test code<br></p></div>
             </div>
+             <!--endprint-->
              <div class="bottom">
                 <div id="changeOpacity">
                     输入框透明度<input type="range" id="opacityRange" min="0" max="100" step="1" onchange="changeBackgroundOpacity(document.getElementById('opacityRange').value)"/>
