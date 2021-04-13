@@ -26,12 +26,30 @@ body{
     z-index: -1;
     
 }
+.musicbar{
+    position: absolute;
+    top:10px;
+    right: 0;
+    height:200px;
+    width: 80px;
+    z-index: 1000;
+  
+}
+.musicplayer{
+    position: absolute;
+    top:0;
+    right:100px;
+    width: 330px;
+    height: 86px;
+   
+}
+
 
 .maincontainer{
     position: relative;
     height: 1000px;
     width: 1050px;
-    margin: 10px auto;
+    margin: 60px auto;
     padding: 10px;
 
 }
@@ -68,9 +86,11 @@ body{
     float:right;
     margin-left: 20px;
 }
-#tips{
+#tipsname{
     border-radius: 5px;
     padding: 3px;
+    top: -30px;
+    background-color: rgb(95, 95, 95);
 }
 #mytext{
     padding: 10px;
@@ -122,4 +142,13 @@ img:hover{
     width: 100%;
     display: block;
    
+}
+
+#triangle{
+    width: 0;
+    height: 0;
+    border-width: 10px;   
+    border-style: solid;
+    margin: 0 auto;
+    border-color:grey transparent transparent transparent;
 }

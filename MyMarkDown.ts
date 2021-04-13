@@ -1,3 +1,4 @@
+
 declare var jQuery: (selector: string) => any;
 var lastEditRange:any
 var codenum:number
@@ -13,7 +14,6 @@ var colorboard:any=document.getElementById('colorboard')
 */
 
 function pageinit(){      
-      
     lastEditRange=document.createRange()
     codenum=0
     isinit=false
@@ -36,7 +36,7 @@ function pageinit(){
     
         if (flag2||flag1 ) return false;
     }
-    console.log(mytext.firstChild.textContent.length)
+  
 
     lastEditRange.collapse(true)
     lastEditRange.setStart(mytext.firstChild.firstChild,0)
@@ -63,19 +63,21 @@ function pageinit(){
   
     },false)
     mytext.scrollTop=100;
-    var buttonlist:any=document.getElementsByTagName('button')
+    var buttonlist:any=document.getElementsByClassName('menubutton')
     document.getElementById('list1').onmouseout=function(){
         document.getElementById('tips').style.visibility='hidden'
         
     }
-    for(var i:number=0;i<buttonlist.length;i++){
+    for(let i:number=0;i<buttonlist.length;i++){
         var offsetleft:number=buttonlist[i].offsetLeft
         var tip:any=document.getElementById('tips')
+        var tipname:any=document.getElementById('tipsname')
         buttonlist[i].onmouseover=function(event){          
-            tip.style.visibility='visible'       
-            tip.innerText=event.currentTarget.name
+            tip.style.visibility='visible'               
+            tipname.innerText=event.currentTarget.name
             tip.style.fontSize='20px'
-            tip.style.left=event.currentTarget.offsetLeft+17.5-event.currentTarget.name.length*20/2+'px'
+            tip.style.left=event.currentTarget.offsetLeft+15-event.currentTarget.name.length*20/2+'px'
+            tip.style.top=event.currentTarget.offsetTop-45+'px'
       
         }
         
@@ -103,6 +105,32 @@ function pageinit(){
             $('#fontsize').append(num)
         }
         })
+    })
+    $("#musicbutton").click(function(){
+        $("#musiccontent").slideToggle()
+        
+    })
+    $('#wangyimusic').click(function(){
+        $("#localplayer").css("display","none")
+        $("#wangyiplayer").slideToggle()
+
+
+    })
+
+    $('#localmusic').click(function(){
+        $("#wangyiplayer").css("display","none")
+        $("#localplayer").slideToggle()
+
+    })
+
+    $("#changemusicbutton").click(function(){
+   
+        $("#changemusic").slideToggle()
+    })
+    $("#changeconfirm").click(function(){
+        let url="//music.163.com/outchain/player?type=2&id="+$('#musicid').val()+"&auto=1&height=66"
+        $("#changemusic").slideToggle()
+        $('#wangyiyun').attr('src',url)
     })
 }
 
@@ -158,15 +186,15 @@ function change(name:string, args:any=null,args2:any=null){
             mytext.focus()
             var tablerow:any=""
             tablerow+='<tr style="background-color:gainsboro;height:50px">'
-            for(var j:number=0;j<args2;j++){
+            for(let j:number=0;j<args2;j++){
                 tablerow+='<td></td>'
 
             }
             tablerow+='</tr>'
             if(args>1){
-                for(var i:number=0;i<args-1;i++){
+                for(let i:number=0;i<args-1;i++){
                     tablerow+='<tr style="height:50px">'
-                    for(var j:number=0;j<args2;j++){
+                    for(let j:number=0;j<args2;j++){
                         tablerow+='<td></td>'
 
                     }
@@ -201,6 +229,9 @@ function change(name:string, args:any=null,args2:any=null){
                     file=document.getElementById('videofile').files[0]
                 break;
 
+                case 'music':
+                    file=document.getElementById('musicfile').files[0]
+                break;
             }
             var reader:any=new FileReader();  
             reader.readAsDataURL(file) 
@@ -219,6 +250,10 @@ function change(name:string, args:any=null,args2:any=null){
                         var movcontent:string='<source src="'+reader.target.result+'" type="video/mov"/>'
                         var htmlcontent:string='<video height="50%" controls="controls"> '+mp4content+oggcontent+avicontent+mpegcontent+movcontent+' </video>'
                         document.execCommand('insertHTML', false, htmlcontent);
+                    break;
+                    
+                    case 'music':
+                        document.getElementById('music').src=reader.target.result;
                     break;
             
             }
@@ -262,7 +297,11 @@ function pagePrint(){
     window.print();
     document.body.innerHTML = pageHtml;
 //  刷新页面
-    window.location.reload()
+  
 
 }
-pageinit();
+pageinit()
+
+
+
+

@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js"></script>
+    <script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="MyMarkDown.css">
+    <link rel="stylesheet" type="text/css" href="./live2d/assets/waifu.css"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <title>MyMarkdown</title>
 </head>
@@ -44,49 +47,80 @@
     }
 </style>
 <body>
-    
-        <input type="file" name="backgroundfile" id="backgroundfile" accept="image/jpeg, image/jpg, image/jpg, image/png" onchange="changeBackgroundImg()" >
-        <input type="file" name="picturefile" id="picturefile" accept="image/jpeg, image/jpg, image/jpg, image/png" onchange="change('insert','picture')" >
-        <input type="file" name="videofile" id="videofile" accept="video/mp4, video/avi, video/mov, video/mpeg, video/ogg" onchange="change('insert','video')" >
-    
-        
+        <div class="file">
+            <input type="file" name="backgroundfile" id="backgroundfile" accept="image/jpeg, image/jpg, image/jpg, image/png" onchange="changeBackgroundImg()" >
+            <input type="file" name="picturefile" id="picturefile" accept="image/jpeg, image/jpg, image/jpg, image/png" onchange="change('insert','picture')" >
+            <input type="file" name="videofile" id="videofile" accept="video/mp4, video/avi, video/mov, video/mpeg, video/ogg" onchange="change('insert','video')" >
+        </div>
+
+        <div class="musicbar" id="musicbar" >
+            <div id="musicbuttonlist" style="right: 0px;background-color: transparent;width: 100%; text-align: center;">
+                <button id='musicbutton'><img src="./src/icon/music.png" alt="music"></button>
+            </div>
+            <div id="musiccontent"style="height: 80%;width: 100%;display: none;">
+                <img id ="wangyimusic" src="./src/icon/wangyimusic.png" alt="music" style="width: 100%;">
+                <img id="localmusic"src="./src/icon/localmusic.png" alt="music" style="width: 100%;">
+            
+            </div>
+        </div>
+
+        <div class="musicplayer" id="musicplayer">
+            <div class="wangyiplayer" id="wangyiplayer"style="position:absolute;display: none; width:400px">
+                <button id ="changemusicbutton"style="position:absolute;left: -30px;top:30px;"><img src="./src/icon/changemusic.png" alt=""></button>
+                <div class="changemusic" id="changemusic" style="position: absolute; top:20px;left:-250px;display: none; width:200px;height:65px;text-align: center;">
+                    请输入网易云歌曲id
+                    <input id='musicid'type="text" placeholder="歌曲网址后显示" size="10" >
+                    <button id="changeconfirm" style="width: 50px;">确定</button>
+                </div>
+                <iframe id ='wangyiyun' frameborder="no" border="0"  marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1465313631&auto=1&height=66"></iframe>
+            </div>
+            <div class="localplayer" id="localplayer" style="position: absolute; display: none; width: 100%;height: 100%;text-align: center;top:5px">
+                <audio id='music' src="" controls="controls"></audio>
+                <input type="file" name="musicfile" id="musicfile" accept="audio/mp3, audio/wav, audio/flac" onchange="change('insert','music')"  >
+            </div>
+        </div>
+      
+
         <div class="maincontainer" id="maincontainer">
 
 
             <div class="menu" id="menu">
                 <div class="list1" id ='list1' >
-                    <div>
-                    <div id='tips' style="top:-30px; background-color: grey;position: absolute; visibility: hidden;"></div>
-                    </div>
+                    
+                        <div id="tips"style="width:auto;top:-30px;position: absolute; visibility: hidden; white-space: nowrap;">
+                             <div id="tipsname" ></div> 
+                             <div id="triangle" ></div>
+                        </div>
+                
                     <div style="display: inline;text-align: center">
                         <select name="fontstyle" id="fontstyle" onchange="change('fontName',document.getElementById('fontstyle').value)"></select>
                     </div>
                     <div style="display: inline;text-align: center">
                         <select name="fontsize" id="fontsize" onchange="change('fontSize',document.getElementById('fontsize').value)" ></select>
                     </div>
-                    <button name="加粗" id="bold" onclick="change('bold')"><img src="./src/icon/B.png" alt="bold"></button>
-                    <button name="斜体"id="italic" onclick="change('italic')">  <img src="./src/icon/italic.png" alt="save"></button>
-                    <button name="下划线"id="underline" onclick="change('underline')">  <img src="./src/icon/underline.png" alt="underline" >  </button>
-                    <button name="删除线"id="deleteline" onclick="change('strikeThrough')">  <img src="./src/icon/deleteline.png" alt="deleteline" >  </button>
-                    <button name="下标"id="subscript" onclick="change('subscript')">  <img src="./src/icon/subscript.png" alt="subscript" >  </button>
-                    <button name="上标"id="superscript" onclick="change('superscript')">  <img src="./src/icon/superscript.png" alt="superscript" >  </button>
-                    <button name="字体颜色"id="fontcolor" onclick="change('foreColor')">  <img src="./src/icon/fontcolor.png" alt="fontcolor" >  </button>
+                    <button class="menubutton" name="加粗" id="bold" onclick="change('bold')"><img src="./src/icon/B.png" alt="bold"></button>
+                    <button class="menubutton" name="斜体"id="italic" onclick="change('italic')">  <img src="./src/icon/italic.png" alt="save"></button>
+                    <button class="menubutton" name="下划线"id="underline" onclick="change('underline')">  <img src="./src/icon/underline.png" alt="underline" >  </button>
+                    <button class="menubutton" name="删除线"id="deleteline" onclick="change('strikeThrough')">  <img src="./src/icon/deleteline.png" alt="deleteline" >  </button>
+                    <button class="menubutton" name="下标"id="subscript" onclick="change('subscript')">  <img src="./src/icon/subscript.png" alt="subscript" >  </button>
+                    <button class="menubutton" name="上标"id="superscript" onclick="change('superscript')">  <img src="./src/icon/superscript.png" alt="superscript" >  </button>
+                    <button class="menubutton" name="字体颜色"id="fontcolor" onclick="change('foreColor')">  <img src="./src/icon/fontcolor.png" alt="fontcolor" >  </button>
                         <div id="colorboard" style=" position: absolute;display: none;" onmouseout="document.getElementById('colorboard').style.display='none'">
                             <iframe src="./src/colorboard.html" scrolling =no     frameborder="0" height="255 " width="521"></iframe>  
                         </div>
-                    <button name="背景颜色"id="fontbackground" onclick="change('hiliteColor')">  <img src="./src/icon/fontbackground.png" alt="fontbackground" >  </button>
-                    <button name="插入图片"id="picture" onclick="document.getElementById('picturefile').click()"> <img src="./src/icon/picture.png" alt="picture" >  </button>
-                    <button name="插入视频"id="video" onclick="document.getElementById('videofile').click()"> <img src="./src/icon/video.png" alt="video" >  </button>
-                    <button name="有序列表"id="orderlist" onclick="change('insertOrderedList')"> <img src="./src/icon/orderlist.png" alt="orderlist" >  </button>
-                    <button name="无序列表"id="unorderlist" onclick="change('insertUnorderedList')"> <img src="./src/icon/unorderlist.png" alt="unorderlist" >  </button>
-                    <button name="左对齐"id="justifyleft" onclick="change('justifyLeft')"> <img src="./src/icon/justifyleft.png" alt="justifyleft" >  </button>
-                    <button name="居中"id="justifycenter" onclick="change('justifyCenter')"> <img src="./src/icon/justifycenter.png" alt="justifycenter" >  </button>
-                    <button name="右对齐"id="justifyright" onclick="change('justifyRight')"> <img src="./src/icon/justifyright.png" alt="justifyright" >  </button>
-                    <button name="两端对齐"id="justifyfull" onclick="change('justifyFull')"> <img src="./src/icon/justifyfull.png" alt="justifyfull" >  </button>
-                    <button name="表格"id="table" onclick="change('table')"> <img src="./src/icon/table.png" alt="table" >  </button>
-                        <div id ="createtable" style="width: 300px; height: 150px;position:absolute;display: none; background-color: white; border: 0.5px solid;padding: 10px;">
-                                <div class="th" style="width: 100% ;height:30px;line-height: 30px;font-weight: bold;text-align: center;">插入表格</div><hr>
-                                <div class="tr" style="width: 100%; text-align: center;font-size: 15px;">
+                    <button class="menubutton" name="背景颜色"id="fontbackground" onclick="change('hiliteColor')">  <img src="./src/icon/fontbackground.png" alt="fontbackground" >  </button>
+                    <button class="menubutton" name="插入图片"id="picture" onclick="document.getElementById('picturefile').click()"> <img src="./src/icon/picture.png" alt="picture" >  </button>
+                    <button class="menubutton" name="插入视频"id="video" onclick="document.getElementById('videofile').click()"> <img src="./src/icon/video.png" alt="video" >  </button>
+                    <button class="menubutton" name="有序列表"id="orderlist" onclick="change('insertOrderedList')"> <img src="./src/icon/orderlist.png" alt="orderlist" >  </button>
+                    <button class="menubutton" name="无序列表"id="unorderlist" onclick="change('insertUnorderedList')"> <img src="./src/icon/unorderlist.png" alt="unorderlist" >  </button>
+                    <button class="menubutton" name="左对齐"id="justifyleft" onclick="change('justifyLeft')"> <img src="./src/icon/justifyleft.png" alt="justifyleft" >  </button>
+                    <button class="menubutton" name="居中"id="justifycenter" onclick="change('justifyCenter')"> <img src="./src/icon/justifycenter.png" alt="justifycenter" >  </button>
+                    <button class="menubutton" name="右对齐"id="justifyright" onclick="change('justifyRight')"> <img src="./src/icon/justifyright.png" alt="justifyright" >  </button>
+                    <button class="menubutton" name="两端对齐"id="justifyfull" onclick="change('justifyFull')"> <img src="./src/icon/justifyfull.png" alt="justifyfull" >  </button>
+                    <button class="menubutton" name="表格"id="table" onclick="change('table')"> <img src="./src/icon/table.png" alt="table" >  </button>
+                        <div id ="createtable" style="width: 300px; height: 150px;position:absolute;display: none; background-color: white; border: 0.5px solid;padding: 20px;">
+                                <div class="th" style="width: 100% ;height:30px;line-height: 30px;font-weight: bold;">插入表格</div><hr>
+                                <div class="tr" style="width: 100%; text-align: center;font-size: 15px;margin-top: 30px;">
                                     <span>创建</span><input type="text" name="row" id="row" value=3 style=" width: 18%;border: transparent; background-color: transparent; text-align: center;font-size: 20px;">
                                     <span>行</span><input type="text" name="column" id="column" value=3 style=" width: 18%;border: transparent; background-color: transparent; text-align: center;font-size: 20px;">
                                     <span>列的表格</span>
@@ -96,7 +130,7 @@
                                     <button id='canceltable'onclick="document.getElementById('createtable').style.display='none'" style="width: 20%;margin-left: 20%;">取消</button>
                                 </div>
                         </div>    
-                    <button name="插入代码"id="code" onclick="change('code')"> <img src="./src/icon/code.png" alt="code" >  </button>
+                    <button class="menubutton" name="插入代码"id="code" onclick="change('code')"> <img src="./src/icon/code.png" alt="code" >  </button>
                         <div id="insertcode" style="width: 500px; height: 300px;position:absolute;display: none; background-color: white; border: 0.5px solid;padding:20px ;">
                             <div class="th" style="width: 100% ;height:20px;line-height: 20px;font-weight: bold;">插入代码</div><hr>
                             <div class="tr">
@@ -108,10 +142,10 @@
                                 <button id='cancelcode'onclick="document.getElementById('insertcode').style.display='none'" style="width: 20%;margin-left: 20%;">取消</button>
                             </div>
                         </div>
-                    <button name="多行缩进"id="indent" onclick="change('indent')"> <img src="./src/icon/indent.png" alt="indent" >  </button>
-                    <button name="撤销"id="undo" onclick="change('undo')"> <img src="./src/icon/undo.png" alt="undo" >  </button>
-                    <button name="重做"id="redo" onclick="change('redo')"> <img src="./src/icon/redo.png" alt="redo" >  </button>
-                    <button name="导出"id="print" onclick="pagePrint()"> <img src="./src/icon/print.png" alt="print" >  </button>
+                    <button class="menubutton" name="多行缩进"id="indent" onclick="change('indent')"> <img src="./src/icon/indent.png" alt="indent" >  </button>
+                    <button class="menubutton" name="撤销"id="undo" onclick="change('undo')"> <img src="./src/icon/undo.png" alt="undo" >  </button>
+                    <button class="menubutton" name="重做"id="redo" onclick="change('redo')"> <img src="./src/icon/redo.png" alt="redo" >  </button>
+                    <button class="menubutton" name="导出"id="print" onclick="pagePrint()"> <img src="./src/icon/print.png" alt="print" >  </button>
                     
                 </div>
             </div>
@@ -127,12 +161,96 @@
                     <output id="backgroundOpacity"  for="opacityRange"  ></output>
                 </div>
                 <div id="changeBackgroundImg">
-                    更换背景图片<button name="插入图片"id="picture" onclick="document.getElementById('backgroundfile').click()"> <img src="./src/icon/picture.png" alt="picture" >  </button>
+                    更换背景图片<button name="背景图片"id="backgroundpicture" onclick="document.getElementById('backgroundfile').click()"> <img src="./src/icon/picture.png" alt="picture" >  </button>
                 </div>
               
              </div>
         </div>
-               
+
+        <div class="waifu" id='waifu' style="position: fixed;right:10px;bottom: 0;">
+            <div class="waifu-tips"></div>
+            <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+            <div class="waifu-tool">
+                <span class="fui-home"></span>
+                <span class="fui-chat"></span>
+                <span class="fui-eye"></span>
+                <span class="fui-user"></span>
+                <span class="fui-photo"></span>
+                <span class="fui-info-circle"></span>
+                <span class="fui-cross"></span>
+            </div>
+        </div>
 </body>
 <script src="MyMarkDown.js"></script>
+<script src="./live2d/assets/waifu-tips.js"></script>
+<script src="./live2d/assets/live2d.js"></script>
+<script type="text/javascript">initModel("./live2d/assets/")</script>
+
+
+
+
+
+<script>
+    function exportReportTemplet() {
+    var element = $("#text");    // 这个dom元素是要导出pdf的div容器
+    var w = element.width();    // 获得该容器的宽
+    var h = element.height();    // 获得该容器的高
+    var offsetTop = element.offset().top;    // 获得该容器到文档顶部的距离
+    var offsetLeft = element.offset().left;    // 获得该容器到文档最左的距离
+    var canvas = document.createElement("canvas");
+    canvas.width = w * 2;    // 将画布宽&&高放大两倍
+    canvas.height = h * 2;
+    var context = canvas.getContext("2d");
+    var scale = 2;
+    context.scale(2, 2);
+
+    var opts = {
+        scale: scale,
+        canvas: canvas,
+        width: w,
+        height: h,
+        useCORS: true,
+        background: '#FFF'
+    }
+
+    html2canvas(element, opts).then(function (canvas) {
+        allowTaint: false;
+        taintTest: false;
+        var contentWidth = canvas.width;
+        var contentHeight = canvas.height;
+        //一页pdf显示html页面生成的canvas高度;
+        var pageHeight = contentWidth / 592.28 * 841.89;
+        //未生成pdf的html页面高度
+        var leftHeight = contentHeight;
+        //页面偏移
+        var position = 0;
+        //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+        var imgWidth = 595.28;
+        var imgHeight = 592.28 / contentWidth * contentHeight;
+
+        var pageData = canvas.toDataURL('image/jpeg', 1.0);
+     //   var oCanvas = document.getElementById("print");
+       // Canvas2Image.saveAsJPEG(oCanvas);
+        var pdf = new jsPDF('', 'pt', 'a4');
+        
+        //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+        //当内容未超过pdf一页显示的范围，无需分页
+        if (leftHeight < pageHeight) {
+            pdf.addImage(pageData, 'JPEG', 0, 0, w/2,imgHeight);
+        } else {    // 分页
+            while (leftHeight > 0) {
+                pdf.addImage(pageData, 'JPEG', 0, position, w/2,imgHeight)
+                leftHeight -= pageHeight;
+                position -= 841.89;
+                //避免添加空白页
+                if (leftHeight > 0) {
+                    pdf.addPage();
+                }
+            }
+        }
+        pdf.save('销售合同.pdf');
+     })
+
+}
+</script>
 </html>
