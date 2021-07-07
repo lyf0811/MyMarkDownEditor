@@ -8,5 +8,4 @@
 用户可以自己选择对应的背景图片，设置文本编辑框的透明程度
  ![image](https://github.com/lyf0811/MyMarkDownEditor/blob/master/demo/demo3.png)
  
- 
- ps:目前导出pdf文件还存在一定格式问题，秃头程序员正在想办法中...
+ 该网页富文本编辑器简单易用，可以嵌入任意网页，目前正在做打包工作
